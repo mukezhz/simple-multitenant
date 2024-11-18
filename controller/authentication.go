@@ -26,3 +26,11 @@ func Register(context *gin.Context) {
 	}
 	context.JSON(http.StatusCreated, gin.H{"user": savedUser})
 }
+
+func Login(contex *gin.Context) {
+	var input model.AuthenticationInput
+
+	if err := contex.ShouldBindJSON(&input); err != nil {
+		contex.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+}
