@@ -35,7 +35,7 @@ func Login(contex *gin.Context) {
 		contex.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	user, err := model.FinderUserByUsername(input.Username)
+	user, err := model.FindUserByUsername(input.Username)
 	if err != nil {
 		contex.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
