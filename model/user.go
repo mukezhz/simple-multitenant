@@ -23,7 +23,7 @@ func (user *User) BeforeSave(*gorm.DB) error {
 		return err
 	}
 	user.Password = string(passwordHash)
-	user.Password = html.EscapeString(strings.TrimSpace(user.Username))
+	user.Username = html.EscapeString(strings.TrimSpace(user.Username))
 	return nil
 }
 
