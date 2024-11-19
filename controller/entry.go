@@ -38,3 +38,27 @@ func GetAllEntries(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, gin.H{"data": user.Entries})
 }
+
+func GetEntryByID(context *gin.Context) {
+	user, err := helper.CurrentUser(context)
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	entryID := context.Param("id")
+
+	entry, err := model.FindEntryByID(user.ID, entryID)
+	if err != nil {
+		if err.Error() == "entry not found" {
+			context.JSON(http.StatusNotFound, gin.H{"error": "Entry not found"})
+		} else {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch entry"})
+		}
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{
+		"status": "success",
+		"data":   entry,
+	})
+}
