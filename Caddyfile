@@ -1,0 +1,7 @@
+http://api.multitenant.com {
+	reverse_proxy localhost:8080
+}
+
+http://multitenant.com {
+	reverse_proxy localhost:8000
+}

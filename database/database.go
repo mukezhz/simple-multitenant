@@ -1,29 +1,41 @@
 package database
 
-import (
-	"fmt"
-	"os"
+type MultitenantDomain struct {
+	TenantID string `json:"tenant_id"`
+	Domain   string `json:"domain"`
+}
 
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-)
+type TenantInformation struct {
+	TenantID string `json:"tenant_id"`
+	Detail   string `json:"detail"`
+}
 
-var Database *gorm.DB
+type Database struct {
+	Multitenants       []MultitenantDomain
+	TenantInformations []TenantInformation
+}
 
-func Connect() {
-	var err error
-	host := os.Getenv("DB_HOST")
-	username := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	databaseName := os.Getenv("DB_NAME")
-	port := os.Getenv("DB_PORT")
-
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, port, databaseName)
-	Database, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-
-	if err != nil {
-		panic(err)
-	} else {
-		fmt.Println("Successfully connected to the database")
+func NewDatabase() *Database {
+	return &Database{
+		InitializeMultitenantDomain(),
+		InitializeMultitenantInfomation(),
 	}
+}
+
+func (s *Database) FindTenantIDByDomain(domain string) string {
+	for _, s := range s.Multitenants {
+		if s.Domain == domain {
+			return s.TenantID
+		}
+	}
+	return ""
+}
+
+func (s *Database) FindDetailByTenantID(tenantID string) string {
+	for _, s := range s.TenantInformations {
+		if s.TenantID == tenantID {
+			return s.Detail
+		}
+	}
+	return ""
 }
